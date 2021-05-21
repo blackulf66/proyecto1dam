@@ -1,6 +1,7 @@
 package com.salesianostriana.dam.proyecto.servicios;
 
 import org.springframework.stereotype.Service;
+
 import com.salesianostriana.dam.proyecto.modelo.User;
 import com.salesianostriana.dam.proyecto.repos.UserRepository;
 /**
@@ -11,4 +12,5 @@ import com.salesianostriana.dam.proyecto.repos.UserRepository;
 @Service
 public class UserServicio 
 	extends BaseService<User, Long, UserRepository>{
+	
 }

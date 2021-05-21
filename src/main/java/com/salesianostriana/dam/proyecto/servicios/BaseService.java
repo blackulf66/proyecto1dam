@@ -1,18 +1,10 @@
 package com.salesianostriana.dam.proyecto.servicios;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
-/**
- * servicio base para los servicios de rango y user
- * @author BlackUlf
- *
- * @param <T>
- * @param <ID>
- * @param <R>
- */
-public abstract class BaseService<T, ID, R extends JpaRepository<T,ID>> {
+
+public abstract class BaseService<T, ID, R extends JpaRepository<T,ID>> implements IBaseService<T,ID> {
 	
 	@Autowired
 	protected R repository;
@@ -37,8 +29,9 @@ public abstract class BaseService<T, ID, R extends JpaRepository<T,ID>> {
 		return repository.findAll();
 	}
 	
-	public Optional<T> findById(ID id) {
-		return repository.findById(id);
+	public T findById(ID id) {
+		return repository.findById(id).orElse(null);
 	}
+	
 
 }

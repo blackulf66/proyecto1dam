@@ -1,42 +1,47 @@
 package com.salesianostriana.dam.proyecto.controladores;
 
-
-import java.util.Optional;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import com.salesianostriana.dam.proyecto.modelo.User;
 import com.salesianostriana.dam.proyecto.servicios.RangoServicio;
 import com.salesianostriana.dam.proyecto.servicios.UserServicio;
-import com.salesianostriana.dam.proyecto.modelo.User;
+
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class MainController {
-	
+public class UserController {
+	@Autowired
 	private final UserServicio UserServicio;
+	@Autowired
 	private final RangoServicio RangoServicio;
-	
 	/**
 	 * Método que gestiona la petición índice ya que en ambas se mostrará la lista completa de usuarios y rangos.
 	 * Para ello se añaden al GetMapping los dos nombres.
 	 * 
 	 */
 	@GetMapping("/")
-	public String todosLosRangos(Model model) {
+	public String todosLosUsersyrangos(Model model) {
 		model.addAttribute("listadoRango", RangoServicio.findAll());
 		model.addAttribute("listadoUser", UserServicio.findAll());
 
 		return "index";
 	}
+	
+	
+	
 	/**
-	 * Método que atiende la petición de mostrar formulario, en este caso vacío. Pasamos al model un nuevo user vacío.
+	 * Método que procesa la respuesta del formulario.
+	 * Nombramos "la petición" en el PostMapping con la ruta /adduser para distinguirla de la de editar que será, 
+	 * redirigimos de nuevo al controller inicial para que pinte la tabla con el nuevo usuario recién agregado
 	 */
-
+	
 	@GetMapping("/form")
 	public String showForm(Model model) {
 		User User = new User();
@@ -45,13 +50,7 @@ public class MainController {
 
 		return "form";
 	}
-
-	/**
-	 * Método que procesa la respuesta del formulario.
-	 * Nombramos "la petición" en el PostMapping con la ruta /adduser para distinguirla de la de editar que será, 
-	 * como puede verse más abajo, /editar/submit
-	 * Por otro lado devolvemos o redirigimos de nuevo al controller inicial para que pinte la tabla con el nuevo usuario recién agregado
-	 */
+	
 	@PostMapping("/addUser")
 	public String submit(@ModelAttribute("UserForm") User User, Model model) {
 
@@ -69,58 +68,27 @@ public class MainController {
 	 * @return
 	 */
 	@GetMapping("/editar/{id}")
-	public String mostrarFormularioEdicion(@PathVariable("id") long id, Model model) {
-		
-		Optional<User> editar = UserServicio.findById(id);
-		
-		if (editar != null) {
-			model.addAttribute("", editar);
-			return "form";
-		} else {
-			return "redirect:/";
-		}
-		
-		
-	}
-	
-	/**
-	 * Método que procesa la respuesta del formulario al editar
-	 */
-	@PostMapping("/editar/submit")
-	public String procesarFormularioEdicion(@ModelAttribute("User") User u) {
-		UserServicio.edit(u);
-		return "redirect:/";
-	}
-/*
-	@GetMapping("/editar/{id}")
-	public String Edicion(@PathVariable("id") long id, Model model) {
+	public String editarUser(@PathVariable("id") Long id, Model model) {
 
-		User Edit = UserServicio.findById(id);
-				
-		if (Edit != null) {
-			model.addAttribute("Usuario", Edit);
+		User user = UserServicio.findById(id);
+
+		if (user != null) {
+			model.addAttribute("User", user);
+			model.addAttribute("Rango", RangoServicio.findAll());
 			return "form";
 		} else {
 			return "redirect:/";
 		}
 	}
-
-	@PostMapping("/editar/submit")
-	public String Edicion(@ModelAttribute("User") User u) {
-		UserServicio.edit(u);
-		return "redirect:/";
-	}
-	*/
-
 	/**
 	 * metodo que borra a un usuario dentro de un rango
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/borrar/{id}") public String borrar(@PathVariable("id") long id)
-	  { UserServicio.deleteById(id); return "redirect:/"; }
-	 
-
-	
-
+	@GetMapping("/borrar/{id}") public String borrar(@PathVariable("id") long id) {
+		
+	   UserServicio.deleteById(id); 
+	   
+	  return "redirect:/";
+	  }
 }
