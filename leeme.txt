@@ -1,0 +1,1 @@
+las pruebas y lo que consiste el programa esta dentro de la carpeta static en otra carpeta llamada documentacion
